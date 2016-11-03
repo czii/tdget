@@ -1,17 +1,23 @@
 import urllib.request
 import re
 import time
+import socket
 
 def geturl(url):
-    response = urllib.request.urlopen(url)
-    html = response.read()
-    return html
+	timeout = 3
+	socket.setdefaulttimeout(timeout)
+	response = urllib.request.urlopen(url)
+	html = response.read()
+	return html
 
 while 1:
 	print(time.strftime('%H:%M',time.localtime(time.time())))
 	#数据获取部分
+
+
 	try :
 		html = geturl("http://m.91jin.com/hq/lists.html")
+		
 		silver = re.search('现货银([\s\S]{200})',html.decode("utf8"),flags=0).group()
 		xau = re.search('伦敦金([\s\S]{200})',html.decode("utf8"),flags=0).group()
 		xag = re.search('伦敦银([\s\S]{200})',html.decode("utf8"),flags=0).group()
@@ -26,6 +32,16 @@ while 1:
 
 		status_91jin = 1
 	except :
+		'''
+		try :
+			html = geturl("https://www.91guoxin.com/ajax/gethq?callback=jQuery17208165182760740075_1478135156291&code=LSAG15&dec=4&_=1478135156373")
+			silver = re.search('sell([\s\S]{8})',html.decode("gbk"),flags=0).group()
+			silver = re.findall('\d\d\d\d',silver)
+			silver = float(silver[0])
+			status_91jin = 1
+		except :
+			status_91jin = 0
+			'''
 		status_91jin = 0
 
 	try :
@@ -88,4 +104,4 @@ while 1:
 	if status_sinausdx==1 :
 		print("USDX   ","%.4f"%usdx)
 
-	time.sleep(55)
+	time.sleep(57)
